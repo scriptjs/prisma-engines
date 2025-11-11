@@ -5,6 +5,10 @@ use mobc::{Connection as MobcPooled, Manager};
 use prisma_metrics::WithMetricsInstrumentation;
 use tracing_futures::WithSubscriber;
 
+#[cfg(feature = "mysql")]
+use crate::connector::MysqlUrl;
+#[cfg(feature = "mssql")]
+use crate::connector::MssqlUrl;
 #[cfg(feature = "mssql-native")]
 use crate::connector::MssqlUrl;
 #[cfg(feature = "mysql-native")]
@@ -166,6 +170,18 @@ impl Manager for QuaintManager {
                 use crate::connector::Mssql;
                 Ok(Box::new(Mssql::new(url.clone()).await?) as Self::Connection)
             }
+
+            #[cfg(not(any(feature = "mysql", feature = "sqlite", feature = "mssql")))]
+            _ => unreachable!(),
+
+            #[cfg(feature = "mysql")]
+            &QuaintManager::Mysql { .. } => todo!("MySQL not implemented in this fork"),
+            
+            #[cfg(feature = "sqlite")]
+            &QuaintManager::Sqlite { .. } => todo!("SQLite not implemented in this fork"),
+            
+            #[cfg(feature = "mssql")]
+            &QuaintManager::Mssql { .. } => todo!("MSSQL not implemented in this fork"),
         };
 
         conn.iter()

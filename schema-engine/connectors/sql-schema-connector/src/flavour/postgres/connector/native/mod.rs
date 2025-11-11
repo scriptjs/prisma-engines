@@ -8,9 +8,10 @@ use enumflags2::BitFlags;
 use indoc::indoc;
 use psl::PreviewFeature;
 use quaint::{
-    connector::{self, MakeTlsConnectorManager, PostgresUrl, tokio_postgres::error::ErrorPosition},
+    connector::{self, MakeTlsConnectorManager, PostgresUrl},
     prelude::{NativeConnectionInfo, Queryable},
 };
+use quaint::connector::tokio_postgres::error::ErrorPosition;
 use schema_connector::{ConnectorError, ConnectorParams, ConnectorResult};
 use url::Url;
 use user_facing_errors::{
@@ -144,9 +145,8 @@ impl Connection {
 
     pub async fn apply_migration_script(&self, migration_name: &str, script: &str) -> ConnectorResult<()> {
         tracing::debug!(query_type = "raw_cmd", script);
-        let client = self.0.client();
-
-        match client.simple_query(script).await {
+        
+        match self.0.raw_cmd(script).await {
             Ok(_) => Ok(()),
             Err(err) => {
                 let (database_error_code, database_error): (Option<&str>, _) = if let Some(db_error) = err.as_db_error()

@@ -5,9 +5,6 @@ use mobc::{Connection as MobcPooled, Manager};
 use prisma_metrics::WithMetricsInstrumentation;
 use tracing_futures::WithSubscriber;
 
-#[cfg(feature = "mysql")]
-use crate::connector::MysqlUrl;
-#[cfg(feature = "mssql")]
 use crate::connector::MssqlUrl;
 #[cfg(feature = "mssql-native")]
 use crate::connector::MssqlUrl;

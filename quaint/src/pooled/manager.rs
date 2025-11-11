@@ -92,22 +92,21 @@ impl Queryable for PooledConnection {
     }
 }
 
-#[doc(hidden)]
 pub enum QuaintManager {
-    #[cfg(feature = "mysql")]
+    #[cfg(feature = "mysql-native")]
     Mysql { url: MysqlUrl },
 
-    #[cfg(feature = "postgresql")]
+    #[cfg(feature = "postgresql-native")]
     Postgres {
         url: PostgresNativeUrl,
         tls_manager: Box<MakeTlsConnectorManager>,
         is_tracing_enabled: bool,
     },
 
-    #[cfg(feature = "sqlite")]
+    #[cfg(feature = "sqlite-native")]
     Sqlite { url: String, db_name: String },
 
-    #[cfg(feature = "mssql")]
+    #[cfg(feature = "mssql-native")]
     Mssql { url: MssqlUrl },
 }
 
@@ -179,7 +178,7 @@ impl Manager for QuaintManager {
 
     fn validate(&self, conn: &mut Self::Connection) -> bool {
         let single_use_connection = match self {
-            #[cfg(feature = "postgresql")]
+            #[cfg(feature = "postgresql-native")]
             Self::Postgres { url, .. } => url.single_use_connections(),
             _ => false,
         };

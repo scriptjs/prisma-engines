@@ -123,24 +123,22 @@ impl Manager for QuaintManager {
     async fn connect(&self) -> crate::Result<Self::Connection> {
         let conn = match self {
             #[cfg(feature = "sqlite-native")]
-            QuaintManager::Sqlite { url, .. } => {
+            &QuaintManager::Sqlite { ref url, .. } => {
                 use crate::connector::Sqlite;
-
                 let conn = Sqlite::new(url)?;
-
                 Ok(Box::new(conn) as Self::Connection)
             }
 
             #[cfg(feature = "mysql-native")]
-            QuaintManager::Mysql { url } => {
+            &QuaintManager::Mysql { ref url } => {
                 use crate::connector::Mysql;
                 Ok(Box::new(Mysql::new(url.clone()).await?) as Self::Connection)
             }
 
             #[cfg(feature = "postgresql-native")]
-            QuaintManager::Postgres {
-                url,
-                tls_manager,
+            &QuaintManager::Postgres {
+                ref url,
+                ref tls_manager,
                 is_tracing_enabled: false,
             } => {
                 use crate::connector::{PostgreSqlWithDefaultCache, PostgreSqlWithNoCache};
@@ -152,9 +150,9 @@ impl Manager for QuaintManager {
             }
 
             #[cfg(feature = "postgresql-native")]
-            QuaintManager::Postgres {
-                url,
-                tls_manager,
+            &QuaintManager::Postgres {
+                ref url,
+                ref tls_manager,
                 is_tracing_enabled: true,
             } => {
                 use crate::connector::{PostgreSqlWithNoCache, PostgreSqlWithTracingCache};
@@ -166,22 +164,10 @@ impl Manager for QuaintManager {
             }
 
             #[cfg(feature = "mssql-native")]
-            QuaintManager::Mssql { url } => {
+            &QuaintManager::Mssql { ref url } => {
                 use crate::connector::Mssql;
                 Ok(Box::new(Mssql::new(url.clone()).await?) as Self::Connection)
             }
-
-            #[cfg(not(any(feature = "mysql", feature = "sqlite", feature = "mssql")))]
-            _ => unreachable!(),
-
-            #[cfg(feature = "mysql")]
-            &QuaintManager::Mysql { .. } => todo!("MySQL not implemented in this fork"),
-            
-            #[cfg(feature = "sqlite")]
-            &QuaintManager::Sqlite { .. } => todo!("SQLite not implemented in this fork"),
-            
-            #[cfg(feature = "mssql")]
-            &QuaintManager::Mssql { .. } => todo!("MSSQL not implemented in this fork"),
         };
 
         conn.iter()

@@ -11,7 +11,6 @@ use quaint::{
     connector::{self, MakeTlsConnectorManager, PostgresUrl},
     prelude::{NativeConnectionInfo, Queryable},
 };
-use quaint::connector::postgres::native::tokio_postgres::error::ErrorPosition;
 use schema_connector::{ConnectorError, ConnectorParams, ConnectorResult};
 use url::Url;
 use user_facing_errors::{

@@ -363,7 +363,7 @@ impl Quaint {
         #[allow(unused_variables)] is_tracing_enabled: bool,
     ) -> crate::Result<Builder> {
         match url_str {
-            #[cfg(feature = "sqlite")]
+            #[cfg(all(feature = "sqlite", feature = "sqlite-native"))]
             s if s.starts_with("file") => {
                 let params = crate::connector::SqliteParams::try_from(s)?;
 
@@ -388,7 +388,7 @@ impl Quaint {
 
                 Ok(builder)
             }
-            #[cfg(feature = "mysql")]
+            #[cfg(all(feature = "mysql", feature = "mysql-native"))] 
             s if s.starts_with("mysql") => {
                 let mut url = crate::connector::MysqlUrl::new(url::Url::parse(s)?)?;
                 let connection_limit = url.connection_limit();
@@ -421,7 +421,7 @@ impl Quaint {
 
                 Ok(builder)
             }
-            #[cfg(feature = "postgresql")]
+            #[cfg(all(feature = "postgresql", feature = "postgresql-native"))]
             s if s.starts_with("postgres") || s.starts_with("postgresql") => {
                 let url = crate::connector::PostgresNativeUrl::new(url::Url::parse(s)?)?;
                 let connection_limit = url.connection_limit();
@@ -455,7 +455,7 @@ impl Quaint {
 
                 Ok(builder)
             }
-            #[cfg(feature = "mssql")]
+            #[cfg(all(feature = "mssql", feature = "mssql-native"))]
             s if s.starts_with("jdbc:sqlserver") || s.starts_with("sqlserver") => {
                 let url = crate::connector::MssqlUrl::new(s)?;
                 let connection_limit = url.connection_limit();

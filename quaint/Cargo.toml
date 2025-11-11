@@ -53,7 +53,6 @@ postgresql-native = [
   "dep:byteorder",
   "dep:tokio-tungstenite",
   "dep:tokio-util",
-  "tokio-util/io",
 ]
 postgresql = []
 
@@ -191,7 +190,7 @@ optional = true
 
 [dependencies.tokio-util]
 workspace = true
-features = ["compat"]
+features = ["compat", "io"]
 optional = true
 
 [dependencies.query-template]

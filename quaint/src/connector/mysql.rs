@@ -9,3 +9,7 @@ mod url;
 pub use self::url::*;
 pub use defaults::*;
 pub use error::MysqlError;
+
+// Re-export mysql_async for schema-connector usage
+#[cfg(feature = "mysql-native")]
+pub use native::mysql_async;
